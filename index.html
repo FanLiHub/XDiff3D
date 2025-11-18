@@ -157,7 +157,25 @@ Enhancing the cross-domain generalization of 3D semantic segmentation is a pivot
       </div>
       <!--/ Method. -->
 
-      
+            <!-- Quantitative -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Quantitative Comparison</h2>
+          <div class="content has-text-centered">
+            <img src="./static/images/quantitative1.png" class="result-img">
+            <p style="text-align:justify;">
+            Performance comparison of domain adaptive and domain generalized 3D semantic segmentation methods in four typical settings. xM denotes the result which is obtained by taking the mean of the predicted 2D and 3D probabilities after softmax.
+            </p>
+          </div>
+          <div class="content has-text-centered">
+            <img src="./static/images/quantitative2.png" class="result-img">
+            <p style="text-align:justify;">
+            Comparison of previous domain generalization methods on SemanticKITTI→SemanticSTF and SynLiDAR→SemanticSTF benchmarks.
+            </p>
+          </div>
+        </div>
+      </div>
+
 
       <!-- Qualitative. -->
       <div class="columns is-centered has-text-centered">
@@ -174,205 +192,7 @@ Enhancing the cross-domain generalization of 3D semantic segmentation is a pivot
       </div>
   </section>
 
-  <section class="section">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Performance Comparison</h2>
 
-    <div class="content">
-      <table class="table is-bordered is-striped is-hoverable is-fullwidth" style="font-size:14px;">
-        <thead>
-          <tr>
-            <th colspan="2">S:Source / T:Target</th>
-            <th colspan="2">vKITTI/sKITTI</th>
-            <th colspan="2">nuScenes:USA/Sing</th>
-            <th colspan="2">nuScenes:Day/Night</th>
-            <th colspan="2">A2D2/sKITTI</th>
-          </tr>
-          <tr>
-            <th>Task</th>
-            <th>Method</th>
-            <th>3D</th><th>xM</th>
-            <th>3D</th><th>xM</th>
-            <th>3D</th><th>xM</th>
-            <th>3D</th><th>xM</th>
-          </tr>
-        </thead>
-
-        <tbody>
-
-          <tr>
-            <td rowspan="10">DA</td>
-            <td>logCORAL</td>
-            <td>36.8</td><td>47.0</td>
-            <td>63.2</td><td>69.4</td>
-            <td>68.7</td><td>63.7</td>
-            <td>41.0</td><td>42.2</td>
-          </tr>
-
-          <tr>
-            <td>MinEnt</td>
-            <td>43.3</td><td>47.1</td>
-            <td>61.5</td><td>66.0</td>
-            <td>68.8</td><td>63.6</td>
-            <td>39.6</td><td>42.6</td>
-          </tr>
-
-          <tr>
-            <td>BDL</td>
-            <td>44.3</td><td>35.6</td>
-            <td>64.8</td><td>70.4</td>
-            <td>69.6</td><td>63.0</td>
-            <td>41.7</td><td>45.2</td>
-          </tr>
-
-          <tr>
-            <td>xMUDA</td>
-            <td>46.7</td><td>48.2</td>
-            <td>63.2</td><td>69.4</td>
-            <td>69.2</td><td>67.4</td>
-            <td>46.0</td><td>44.0</td>
-          </tr>
-
-          <tr>
-            <td>AUDA</td>
-            <td>37.8</td><td>41.3</td>
-            <td>64.0</td><td>69.2</td>
-            <td>69.8</td><td>64.8</td>
-            <td>43.6</td><td>46.8</td>
-          </tr>
-
-          <tr>
-            <td>DsCML</td>
-            <td>38.4</td><td>45.5</td>
-            <td>56.2</td><td>66.1</td>
-            <td>49.3</td><td>53.2</td>
-            <td>45.1</td><td>44.5</td>
-          </tr>
-
-          <tr>
-            <td>Dual-Cross</td>
-            <td>35.1</td><td>44.2</td>
-            <td>58.1</td><td>66.5</td>
-            <td>69.7</td><td>68.0</td>
-            <td>40.0</td><td>48.6</td>
-          </tr>
-
-          <tr>
-            <td>SSE</td>
-            <td>40.0</td><td>49.6</td>
-            <td>63.9</td><td>69.2</td>
-            <td>69.0</td><td>68.9</td>
-            <td>46.8</td><td>48.4</td>
-          </tr>
-
-          <tr>
-            <td>BFtD</td>
-            <td>45.5</td><td>51.5</td>
-            <td>62.2</td><td>69.4</td>
-            <td>70.4</td><td>68.3</td>
-            <td>44.4</td><td>48.7</td>
-          </tr>
-
-          <tr>
-            <td>MM2D3D</td>
-            <td style="background:#fdf8c0;">50.3</td>
-            <td style="background:#fdf8c0;">56.5</td>
-            <td style="background:#fdf8c0;">66.8</td>
-            <td style="background:#fdf8c0;">72.4</td>
-            <td>70.2</td>
-            <td style="background:#e4edb8;">72.1</td>
-            <td>46.1</td>
-            <td>46.2</td>
-          </tr>
-
-          <tr>
-            <td>VFMSeg</td>
-            <td style="background:#e4edb8;">52.0</td>
-            <td style="background:#fdf8c0;">61.0</td>
-            <td>65.6</td><td>72.3</td>
-            <td style="background:#fdf8c0;">70.5</td><td>66.5</td>
-            <td style="background:#fdf8c0;">52.3</td><td style="background:#fdf8c0;">50.0</td>
-          </tr>
-
-          <tr>
-            <td>UniDSeg</td>
-            <td style="background:#fdf8c0;">50.9</td>
-            <td style="background:#e4edb8;">62.0</td>
-            <td style="background:#e4edb8;">67.6</td><td style="background:#e4edb8;">72.9</td>
-            <td style="background:#e4edb8;">71.2</td>
-            <td style="background:#fdf8c0;">71.2</td>
-            <td style="background:#e4edb8;">55.4</td><td style="background:#e4edb8;">57.5</td>
-          </tr>
-
-          <tr>
-            <td><b>XDiff3D</b></td>
-            <td style="background:#c1e6cc;"><b>53.1</b></td>
-            <td style="background:#c1e6cc;"><b>63.3</b></td>
-            <td style="background:#c1e6cc;"><b>69.5</b></td>
-            <td style="background:#c1e6cc;"><b>74.1</b></td>
-            <td style="background:#c1e6cc;"><b>73.5</b></td>
-            <td style="background:#c1e6cc;"><b>72.3</b></td>
-            <td style="background:#c1e6cc;"><b>57.6</b></td>
-            <td style="background:#c1e6cc;"><b>58.8</b></td>
-          </tr>
-
-          <!-- DG section -->
-          <tr>
-            <td rowspan="4">DG</td>
-            <td>xMUDA</td>
-            <td>37.4</td><td>39.0</td>
-            <td>62.3</td><td>68.6</td>
-            <td style="background:#fdf8c0;">68.9</td><td>59.6</td>
-            <td style="background:#fdf8c0;">36.7</td><td>41.6</td>
-          </tr>
-
-          <tr>
-            <td>MM2D3D</td>
-            <td style="background:#fdf8c0;">40.2</td>
-            <td style="background:#fdf8c0;">44.2</td>
-            <td style="background:#fdf8c0;">62.3</td>
-            <td style="background:#fdf8c0;">70.9</td>
-            <td>63.2</td><td style="background:#fdf8c0;">68.3</td>
-            <td>35.9</td><td style="background:#fdf8c0;">43.6</td>
-          </tr>
-
-          <tr>
-            <td>UniDSeg</td>
-            <td style="background:#e4edb8;">44.7</td>
-            <td style="background:#e4edb8;">60.0</td>
-            <td style="background:#e4edb8;">64.5</td>
-            <td style="background:#e4edb8;">72.3</td>
-            <td style="background:#e4edb8;">70.5</td>
-            <td style="background:#e4edb8;">70.0</td>
-            <td style="background:#e4edb8;">46.3</td>
-            <td style="background:#e4edb8;">54.4</td>
-          </tr>
-
-          <tr>
-            <td><b>XDiff3D</b></td>
-            <td style="background:#c1e6cc;"><b>46.9</b></td>
-            <td style="background:#c1e6cc;"><b>61.3</b></td>
-            <td style="background:#c1e6cc;"><b>66.7</b></td>
-            <td style="background:#c1e6cc;"><b>73.5</b></td>
-            <td style="background:#c1e6cc;"><b>72.4</b></td>
-            <td style="background:#c1e6cc;"><b>71.6</b></td>
-            <td style="background:#c1e6cc;"><b>49.1</b></td>
-            <td style="background:#c1e6cc;"><b>56.2</b></td>
-          </tr>
-
-        </tbody>
-      </table>
-
-      <p style="font-size:13px; text-align:justify; margin-top:10px;">
-        Top three results are color-coded: 
-        <span style="background:#c1e6cc;">best</span>,
-        <span style="background:#e4edb8;">second</span>,
-        <span style="background:#fdf8c0;">third</span>.
-        xM denotes the mean of 2D and 3D softmax probabilities.
-      </p>
-    </div>
-  </div>
-</section>
 
 
   <section class="section" id="BibTeX">
