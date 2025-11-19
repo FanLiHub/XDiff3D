@@ -177,7 +177,12 @@ python xmuda/train_dg_clip_XDiff3D.py configs/a2d2_nuscenes/baseline_dg.yaml
 
 ```
 cd <root dir of this repo>
-python xmuda/train_dg_clip_XDiff3D.py /path/to/your/config.yaml 
+python xmuda/train_da_clip_XDiff3D.py /path/to/your/config.yaml 
+```
+For example:
+
+```
+python xmuda/train_da_clip_XDiff3D.py configs/vkitti_skitti/baseline_da.yaml
 ```
 
 ## Acknowledgements
