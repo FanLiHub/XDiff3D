@@ -154,9 +154,14 @@ SemanticSTF
 ## Evaluation
 
     cd <root dir of this repo>
-    python evaluate.py configs/kitti2stf/minkunet/cr0p5.yaml --checkpoint_path /PATH/CHECKPOINT_NAME.pt
-    # or
-    python evaluate_by_weather.py configs/synlidar2stf/minkunet/cr0p5.yaml  --checkpoint_path /PATH/CHECKPOINT_NAME.pt
+    python xmuda/test.py /path/to/your/config.yaml /path/to/your/checkpoint/model_name.pt
+
+For example:
+
+```
+python evaluate_by_weather.py configs/a2d2_nuscenes/baseline_dg.yaml  a2d2_nuscenes/dg/ViT-L-14/model_3d_045000.pth
+```
+
 
 ## Training DG
 
