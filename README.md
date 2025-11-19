@@ -2,7 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
 [![Static Badge](https://img.shields.io/badge/View-Poster-purple)](https://drive.google.com/file/d/13n3cEPyAzzD1ZJqtVMulFuPnWA1tm0yT/view?usp=sharing)
-[![Static Badge](https://img.shields.io/badge/Pub-NeurIPS'25-red)](https://openreview.net/forum?id=j964C6y92q)
+[![Static Badge](https://img.shields.io/badge/Pub-NeurIPS'25-red)](https://openreview.net/forum?id=x8xtRQ5GIk)
+[![Static Badge](https://img.shields.io/badge/Project-green)](https://openreview.net/forum?id=x8xtRQ5GIk)
 
 This repository is the official PyTorch implementation of the **NeurIPS 2025** paper:
 No Object Is an Island: Enhancing 3D Semantic Segmentation Generalization with Diffusion Models,
