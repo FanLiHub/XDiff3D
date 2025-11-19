@@ -159,20 +159,25 @@ SemanticSTF
 For example:
 
 ```
-python evaluate_by_weather.py configs/a2d2_nuscenes/baseline_dg.yaml  a2d2_nuscenes/dg/ViT-L-14/model_3d_045000.pth
+python xmuda/test.py configs/a2d2_nuscenes/baseline_dg.yaml  a2d2_nuscenes/dg/ViT-L-14/model_3d_045000.pth
 ```
 
 
 ## Training DG
 
     cd <root dir of this repo>
-    CUDA_VISIBLE_DEVICES=0 python -W ignore xmuda/train_dg_clip_XDiff3D.py --cfg=configs/dataset_name/dg.yaml
+    python xmuda/train_dg_clip_XDiff3D.py /path/to/your/config.yaml 
+For example:
+
+```
+python xmuda/train_dg_clip_XDiff3D.py configs/a2d2_nuscenes/baseline_dg.yaml 
+```
 
 ## Training UDA
 
 ```
 cd <root dir of this repo>
-CUDA_VISIBLE_DEVICES=0 python -W ignore xmuda/train_da_clip_XDiff3D.py --cfg=configs/dataset_name/da.yaml
+python xmuda/train_dg_clip_XDiff3D.py /path/to/your/config.yaml 
 ```
 
 ## Acknowledgements
