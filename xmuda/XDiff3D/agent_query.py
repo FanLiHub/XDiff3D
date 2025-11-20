@@ -1,15 +1,30 @@
-from functools import reduce,partial
-from timm.models.layers import DropPath, to_2tuple, trunc_normal_
+from functools import reduce, partial
+from operator import mul
+import math
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import math
-from functools import reduce
-from operator import mul
 from torch import Tensor
 
-class Mlp(nn.Module):
+from timm.models.layers import DropPath  # pip install timm
 
+
+class DWConv(nn.Module):
+    def __init__(self, dim=768):
+        super(DWConv, self).__init__()
+        self.dwconv = nn.Conv2d(dim, dim, 3, 1, 1, bias=True, groups=dim)
+
+    def forward(self, x, H, W):
+
+        B, N, C = x.shape
+        x = x.transpose(1, 2).contiguous().view(B, C, H, W)
+        x = self.dwconv(x)
+        x = x.flatten(2).transpose(1, 2).contiguous()
+        return x
+
+
+class Mlp(nn.Module):
     def __init__(self,
                  in_features,
                  hidden_features=None,
@@ -26,6 +41,7 @@ class Mlp(nn.Module):
         self.drop = nn.Dropout(drop)
 
     def forward(self, x, H, W):
+        # x: (B, N, C)
         x = self.fc1(x)
         x = self.dwconv(x, H, W)
         x = self.act(x)
@@ -34,20 +50,6 @@ class Mlp(nn.Module):
         x = self.drop(x)
         return x
 
-
-class DWConv(nn.Module):
-
-    def __init__(self, dim=768):
-        super(DWConv, self).__init__()
-        self.dwconv = nn.Conv2d(dim, dim, 3, 1, 1, bias=True, groups=dim)
-
-    def forward(self, x, H, W):
-        B, N, C = x.shape
-        x = x.transpose(1, 2).contiguous().view(B, C, H, W)
-        x = self.dwconv(x)
-        x = x.flatten(2).transpose(1, 2).contiguous()
-
-        return x
 
 class Attention(nn.Module):
 
@@ -60,13 +62,12 @@ class Attention(nn.Module):
                  proj_drop=0.,
                  sr_ratio=1):
         super().__init__()
-        assert dim % num_heads == 0, f'dim {dim} should be divided by ' \
-                                     f'num_heads {num_heads}.'
+        assert dim % num_heads == 0, f'dim {dim} should be divided by num_heads {num_heads}.'
 
         self.dim = dim
         self.num_heads = num_heads
         head_dim = dim // num_heads
-        self.scale = qk_scale or head_dim**-0.5
+        self.scale = qk_scale or head_dim ** -0.5
 
         self.q = nn.Linear(dim, dim, bias=qkv_bias)
         self.kv = nn.Linear(dim, dim * 2, bias=qkv_bias)
@@ -76,34 +77,37 @@ class Attention(nn.Module):
 
         self.sr_ratio = sr_ratio
         if sr_ratio > 1:
-            self.sr = nn.Conv2d(
-                dim, dim, kernel_size=sr_ratio, stride=sr_ratio)
+            self.sr = nn.Conv2d(dim, dim, kernel_size=sr_ratio, stride=sr_ratio)
             self.norm = nn.LayerNorm(dim)
 
-    def forward(self, x, H, W):
-        B, N, C = x.shape
-        q = self.q(x).reshape(B, N, self.num_heads,
-                              C // self.num_heads).permute(0, 2, 1,
-                                                           3).contiguous()
+    def forward(self, tokens: Tensor, feats: Tensor, H: int, W: int):
+        B, Nq, C = tokens.shape
+        Bf, Nf, Cf = feats.shape
+        assert B == Bf and C == Cf, \
+            f"tokens({tokens.shape}) and feats({feats.shape}) must match in batch and dim"
+
+        q = self.q(tokens).reshape(B, Nq, self.num_heads,
+                                   C // self.num_heads).permute(0, 2, 1, 3).contiguous()
 
         if self.sr_ratio > 1:
-            x_ = x.permute(0, 2, 1).contiguous().reshape(B, C, H, W)
+            x_ = feats.permute(0, 2, 1).contiguous().reshape(B, C, H, W)
             x_ = self.sr(x_).reshape(B, C, -1).permute(0, 2, 1).contiguous()
-            x_ = self.norm(x_)
+            x_ = self.norm(x_)  # (B, N', C)
             kv = self.kv(x_).reshape(B, -1, 2, self.num_heads,
                                      C // self.num_heads).permute(
-                                         2, 0, 3, 1, 4).contiguous()
+                2, 0, 3, 1, 4).contiguous()
         else:
-            kv = self.kv(x).reshape(B, -1, 2, self.num_heads,
-                                    C // self.num_heads).permute(
-                                        2, 0, 3, 1, 4).contiguous()
+            kv = self.kv(feats).reshape(B, -1, 2, self.num_heads,
+                                        C // self.num_heads).permute(
+                2, 0, 3, 1, 4).contiguous()
+
         k, v = kv[0], kv[1]
 
-        attn = (q @ k.transpose(-2, -1).contiguous()) * self.scale
+        attn = (q @ k.transpose(-2, -1)) * self.scale  # (B,h,Nq,Nk)
         attn = attn.softmax(dim=-1)
         attn = self.attn_drop(attn)
 
-        x = (attn @ v).transpose(1, 2).contiguous().reshape(B, N, C)
+        x = (attn @ v).transpose(1, 2).contiguous().reshape(B, Nq, C)
         x = self.proj(x)
         x = self.proj_drop(x)
 
@@ -135,8 +139,7 @@ class Block(nn.Module):
             proj_drop=drop,
             sr_ratio=sr_ratio)
 
-        self.drop_path = DropPath(
-            drop_path) if drop_path > 0. else nn.Identity()
+        self.drop_path = DropPath(drop_path) if drop_path > 0. else nn.Identity()
         self.norm2 = norm_layer(dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
         self.mlp = Mlp(
@@ -145,12 +148,16 @@ class Block(nn.Module):
             act_layer=act_layer,
             drop=drop)
 
-    def forward(self, x, H, W):
-        x = x + self.drop_path(self.attn(self.norm1(x), H, W))
-        x = x + self.drop_path(self.mlp(self.norm2(x), H, W))
+    def forward(self, tokens: Tensor, feats: Tensor, H: int, W: int):
+        tokens = tokens + self.drop_path(
+            self.attn(self.norm1(tokens), feats, H, W)
+        )
 
-        return x
-
+        B, Nq, C = tokens.shape
+        tokens = tokens + self.drop_path(
+            self.mlp(self.norm2(tokens), H=1, W=Nq)
+        )
+        return tokens
 
 
 
@@ -297,9 +304,10 @@ class object_query_2D_Dual(nn.Module):
             cls_token, feats = torch.tensor_split(feats, [1], dim=0)
 
         tokens1, tokens2 = self.get_tokens(layer)
-
-        out1 = self.block1[layer](tokens1, feats)
-        out2 = self.block2[layer](tokens2, feats)
+        B, Nf, C = feats.shape
+        assert Nf == H * W, f"feats length {Nf} != H*W={H*W}"
+        out1 = self.block1[layer](tokens1, feats, H, W)
+        out2 = self.block2[layer](tokens2, feats, H, W)
 
 
         if not batch_first:
@@ -404,6 +412,9 @@ class object_query_3D(nn.Module):
             feats = feats.permute(1, 0, 2)
         if has_cls_token:
             cls_token, feats = torch.tensor_split(feats, [1], dim=0)
+        B, Nf, C = feats.shape
+        assert Nf == H * W, f"feats length {Nf} != H*W={H*W}"
         tokens = self.get_tokens(layer)
-        self.learnable_tokens[layer]=self.block[id](tokens, feats)
+        self.learnable_tokens[layer]=self.block[id](tokens, feats, H, W)
+
 
