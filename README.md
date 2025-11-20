@@ -14,6 +14,9 @@ Enhancing the cross-domain generalization of 3D semantic segmentation is a pivot
 
 ![Framework](static/images/framework.png)
 
+## Visual Results
+![Framework](static/images/qualitatives.png)
+
 ## Environment
 
 - Python (3.8.20)
