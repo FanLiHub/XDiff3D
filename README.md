@@ -1,7 +1,7 @@
 # No Object Is an Island: Enhancing 3D Semantic Segmentation Generalization with Diffusion Models
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
-[![Static Badge](https://img.shields.io/badge/View-Poster-purple)](https://drive.google.com/file/d/13n3cEPyAzzD1ZJqtVMulFuPnWA1tm0yT/view?usp=sharing)
+[![Static Badge](https://img.shields.io/badge/View-Poster-purple)](https://neurips.cc/media/PosterPDFs/NeurIPS%202025/115266.png?t=1764082995.7536986)
 [![Static Badge](https://img.shields.io/badge/Pub-NeurIPS'25-red)](https://openreview.net/forum?id=x8xtRQ5GIk)
 [![Static Badge](https://img.shields.io/badge/View-Project-green)](https://fanlihub.github.io/XDiff3D/)
 
